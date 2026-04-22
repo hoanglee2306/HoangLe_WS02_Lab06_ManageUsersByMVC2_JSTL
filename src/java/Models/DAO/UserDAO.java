@@ -11,19 +11,18 @@ import java.util.List;
 
 public class UserDAO {
 
-    private static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+private static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+
     private static final String DB_URL = System.getenv().getOrDefault(
             "APP_DB_URL",
-            "jdbc:sqlserver://localhost:1433;databaseName=SampleDB;encrypt=true;trustServerCertificate=true"
+            "jdbc:sqlserver://localhost\\SQLEXPRESS;databaseName=SampleDB1;encrypt=true;trustServerCertificate=true"
     );
-    private static final String DB_USER = System.getenv("APP_DB_USER");
-    private static final String DB_PASSWORD = System.getenv("APP_DB_PASSWORD");
+
+    private static final String DB_USER = System.getenv().getOrDefault("APP_DB_USER", "sa");
+    private static final String DB_PASSWORD = System.getenv().getOrDefault("APP_DB_PASSWORD", "12345678");
 
     private Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName(JDBC_DRIVER);
-        if (DB_USER == null || DB_PASSWORD == null) {
-            throw new SQLException("Database credentials are not configured. Set APP_DB_USER and APP_DB_PASSWORD environment variables.");
-        }
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
 
@@ -49,7 +48,7 @@ public class UserDAO {
 
     public List<User> searchUserByLastName(String searchValue) throws SQLException, ClassNotFoundException {
         List<User> result = new ArrayList<>();
-        String sql = "SELECT userName, password, lastName, isAdmin FROM Registration WHERE lastName LIKE ? ESCAPE '\\\\' ORDER BY userName";
+        String sql = "SELECT userName, password, LastName, isAdmin FROM Registration WHERE lastName LIKE ? ESCAPE '\\\\' ORDER BY userName";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + escapeLikePattern(searchValue) + "%");

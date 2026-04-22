@@ -28,7 +28,11 @@ public class UserController extends HttpServlet {
             String action = request.getParameter("action");
 
             if (userLoggedIn == null) {
-                url = "LogoutController";
+                if (action != null && action.equalsIgnoreCase("Create")) {
+                    url = CREATE_CONTROLLER;
+                } else {
+                    url = "LogoutController";
+                }
             } else if (action == null || action.isEmpty()) {
                 if (userLoggedIn.isIsAdmin()) {
                     url = SEARCH_CONTROLLER;

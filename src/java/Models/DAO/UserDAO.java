@@ -46,12 +46,16 @@ private static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServe
         return null;
     }
 
-    public List<User> searchUserByLastName(String searchValue) throws SQLException, ClassNotFoundException {
+    public List<User> searchUserByName(String searchValue) throws SQLException, ClassNotFoundException {
         List<User> result = new ArrayList<>();
-        String sql = "SELECT userName, password, LastName, isAdmin FROM Registration WHERE lastName LIKE ? ESCAPE '\\\\' ORDER BY userName";
+        String sql = "SELECT userName, password, LastName, isAdmin FROM Registration "
+                + "WHERE userName LIKE ? ESCAPE '\\\\' OR lastName LIKE ? ESCAPE '\\\\' "
+                + "ORDER BY userName";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "%" + escapeLikePattern(searchValue) + "%");
+            String likeValue = "%" + escapeLikePattern(searchValue) + "%";
+            ps.setString(1, likeValue);
+            ps.setString(2, likeValue);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     result.add(new User(

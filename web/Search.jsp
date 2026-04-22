@@ -33,7 +33,6 @@
                 <tr>
                     <th>No.</th>
                     <th>UserName</th>
-                    <th>Password</th>
                     <th>LastName</th>
                     <th>Role</th>
                     <th>Action</th>
@@ -44,13 +43,17 @@
                     <tr>
                         <td>${counter.count}</td>
                         <td>${item.userName}</td>
-                        <td>${item.password}</td>
                         <td>${item.lastName}</td>
                         <td>
                             <input type="checkbox" disabled="disabled" ${item.isAdmin ? 'checked' : ''}/>
                         </td>
                         <td>
-                            <a href="UserController?action=Delete&UserName=${item.userName}&SearchValue=${param.txtSearchValue}">Delete</a>
+                            <form action="UserController" method="post" style="display:inline;">
+                                <input type="hidden" name="action" value="Delete"/>
+                                <input type="hidden" name="UserName" value="${item.userName}"/>
+                                <input type="hidden" name="SearchValue" value="${param.txtSearchValue}"/>
+                                <input type="submit" value="Delete"/>
+                            </form>
                             <a href="UserController?action=Details&UserName=${item.userName}">View</a>
                         </td>
                     </tr>

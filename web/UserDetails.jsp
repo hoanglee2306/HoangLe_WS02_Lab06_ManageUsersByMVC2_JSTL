@@ -24,7 +24,7 @@
         UserName <input type="text" name="txtUserName" value="${user.userName}" readonly="readonly"/>
         <font color="red">${requestScope.errorDetails.userNameError}</font><br/>
 
-        Password <input type="password" name="txtPassword" value="${user.password}"/>
+        Password <input type="password" name="txtPassword" value="" autocomplete="new-password"/>
         <font color="red">${requestScope.errorDetails.passwordError}</font><br/>
 
         LastName <input type="text" name="txtLastName" value="${user.lastName}"/>

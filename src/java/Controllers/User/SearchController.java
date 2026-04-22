@@ -1,6 +1,7 @@
 package Controllers.User;
 
 import Models.DAO.UserDAO;
+import Models.DTO.User;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -23,7 +24,7 @@ public class SearchController extends HttpServlet {
             String searchValue = request.getParameter("txtSearchValue");
             if (searchValue != null && !searchValue.isEmpty()) {
                 UserDAO userDao = new UserDAO();
-                List<?> userList = userDao.searchUserByLastName(searchValue);
+                List<User> userList = userDao.searchUserByLastName(searchValue);
                 request.setAttribute("searchResult", userList);
             }
         } catch (Exception ex) {

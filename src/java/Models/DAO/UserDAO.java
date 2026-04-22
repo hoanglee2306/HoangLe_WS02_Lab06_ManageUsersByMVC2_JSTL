@@ -12,12 +12,18 @@ import java.util.List;
 public class UserDAO {
 
     private static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private static final String DB_URL = "jdbc:sqlserver://localhost:1433;databaseName=SampleDB;encrypt=true;trustServerCertificate=true";
-    private static final String DB_USER = "sa";
-    private static final String DB_PASSWORD = "12345";
+    private static final String DB_URL = System.getenv().getOrDefault(
+            "APP_DB_URL",
+            "jdbc:sqlserver://localhost:1433;databaseName=SampleDB;encrypt=true;trustServerCertificate=true"
+    );
+    private static final String DB_USER = System.getenv("APP_DB_USER");
+    private static final String DB_PASSWORD = System.getenv("APP_DB_PASSWORD");
 
     private Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName(JDBC_DRIVER);
+        if (DB_USER == null || DB_PASSWORD == null) {
+            throw new SQLException("Database credentials are not configured. Set APP_DB_USER and APP_DB_PASSWORD environment variables.");
+        }
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
 
@@ -43,10 +49,10 @@ public class UserDAO {
 
     public List<User> searchUserByLastName(String searchValue) throws SQLException, ClassNotFoundException {
         List<User> result = new ArrayList<>();
-        String sql = "SELECT userName, password, lastName, isAdmin FROM Registration WHERE lastName LIKE ? ORDER BY userName";
+        String sql = "SELECT userName, password, lastName, isAdmin FROM Registration WHERE lastName LIKE ? ESCAPE '\\\\' ORDER BY userName";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "%" + searchValue + "%");
+            ps.setString(1, "%" + escapeLikePattern(searchValue) + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     result.add(new User(
@@ -114,5 +120,15 @@ public class UserDAO {
             ps.setString(1, userName);
             return ps.executeUpdate() > 0;
         }
+    }
+
+    private String escapeLikePattern(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
     }
 }

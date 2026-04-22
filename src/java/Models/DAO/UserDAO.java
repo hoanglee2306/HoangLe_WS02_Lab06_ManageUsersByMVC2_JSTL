@@ -49,7 +49,7 @@ private static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServe
     public List<User> searchUserByName(String searchValue) throws SQLException, ClassNotFoundException {
         List<User> result = new ArrayList<>();
         String sql = "SELECT userName, password, LastName, isAdmin FROM Registration "
-                + "WHERE userName LIKE ? ESCAPE '\\\\' OR lastName LIKE ? ESCAPE '\\\\' "
+                + "WHERE userName LIKE ? ESCAPE '\\' OR lastName LIKE ? ESCAPE '\\' "
                 + "ORDER BY userName";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

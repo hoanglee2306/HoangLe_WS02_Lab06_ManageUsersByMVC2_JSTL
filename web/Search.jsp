@@ -18,7 +18,7 @@
         <input type="submit" value="Logout"/>
     </form>
 
-    <h1>Search user by last name</h1>
+    <h1>Search user by user name or last name</h1>
     <form action="UserController" method="get">
         <input type="hidden" name="action" value="Search"/>
         Enter search value <input type="text" name="txtSearchValue" value="${param.txtSearchValue}"/>
